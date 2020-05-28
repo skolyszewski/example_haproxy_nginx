@@ -1,0 +1,11 @@
+plugin: aws_ec2
+regions:
+  - us-east-1
+
+strict: false
+keyed_groups:
+  - key: tags.Name
+    separator: ''
+
+compose:
+  ansible_host: public-dns-name
