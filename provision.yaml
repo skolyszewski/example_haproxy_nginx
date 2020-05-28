@@ -1,0 +1,6 @@
+- hosts: "{{ hosts | default('lb_webserver') }}"
+  become: yes
+  become_user: root
+  roles:
+    - containerized_web
+    - haproxy
