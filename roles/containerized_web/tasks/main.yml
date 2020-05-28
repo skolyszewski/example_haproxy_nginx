@@ -1,0 +1,50 @@
+- name: install required packages
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  loop:
+    - docker.io
+    - curl
+
+# this one is raw because get_url
+# barks at bash function calls (symbols)
+- name: install docker-compose
+  shell: >
+    curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)"
+    -o /usr/local/bin/docker-compose
+
+- name: +x on docker-compose executable
+  file:
+    path: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x
+
+- name: create /opt/webservers/html(1|2) dirs
+  file:
+    path: /opt/webservers/{{ item }}
+    state: directory
+    recurse: yes
+  loop:
+    - html1
+    - html2
+
+- name: copy compose file
+  copy:
+    src: docker-compose.yaml
+    dest: /opt/webservers/docker-compose.yaml
+    mode: "0640"
+
+- name: copy index.html files
+  copy:
+    src: "{{ item }}"
+    dest: /opt/webservers/html{{ ansible_loop.index }}/index.html
+    mode: "0644"
+  loop:
+    - index1.html
+    - index2.html
+  loop_control:
+    extended: yes
+
+# not using docker_compose module as it has too many dependencies
+# that I'd rather avoid maintaining
+- name: run compose file
+  shell: cd /opt/webservers/ && docker-compose -p webservers up -d

@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  nginx1:
+    image: nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - ./html1/:/usr/share/nginx/html/:ro
+
+  nginx2:
+    image: nginx
+    ports:
+      - "8082:80"
+    volumes:
+      - ./html2/:/usr/share/nginx/html/:ro

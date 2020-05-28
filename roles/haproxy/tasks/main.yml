@@ -1,0 +1,12 @@
+- name: install apt_repository dependencies
+  apt:
+    name: python3-apt
+
+- name: add ppa
+  apt_repository:
+    repo: ppa:vbernat/haproxy-2.0
+
+- name: install haproxy
+  apt:
+    name: haproxy=2.0.*
+    update_cache: yes
