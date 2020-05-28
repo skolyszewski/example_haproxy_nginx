@@ -120,7 +120,7 @@ resource "aws_instance" "lb_webserver" {
 
 # That's not a great approach in a real-world scenario.
 # But in a real-world, we would use existing ssh keys and pass them
-# as variables instead.
+# as variables instead, or just use centralized ansible and roles (aws).
 # This is done like that so we don't need to have pre-existing keys
 # and can still access the machine for the next provisioning steps.
 output "ssh_private_key" {
