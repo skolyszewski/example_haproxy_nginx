@@ -18,4 +18,5 @@ First, provision the VM with `terraform`. Since we're using ssh keys generated o
 you can copy the private part by running `terraform output ssh_private_key > <path>`.
 We'll use that key for with ansible by adding `--private-key <path>` flag
 to `ansible-playbook` command. Obviously, you can add the identity instead.
-To run the ansible, just use `ansible-playbook -i server.aws_ec2.yaml provision.yaml --private-key <path>`
+To run the ansible, just use
+`ansible-playbook -i server.aws_ec2.yaml provision.yaml -u ubuntu --private-key <path>`
