@@ -1,10 +1,9 @@
-- name: install required packages
+- name: ensure required packages are installed
   apt:
     name: "{{ item }}"
     update_cache: yes
   loop:
-    - docker.io
-    - curl
+    - "{{ containers_dependencies }}"
 
 # this one is raw because get_url
 # barks at bash function calls (symbols)
@@ -20,7 +19,7 @@
 
 - name: create /opt/webservers/html(1|2) dirs
   file:
-    path: /opt/webservers/{{ item }}
+    path: "{{ webservers_home }}/{{ item }}"
     state: directory
     recurse: yes
   loop:
@@ -30,13 +29,13 @@
 - name: copy compose file
   copy:
     src: docker-compose.yaml
-    dest: /opt/webservers/docker-compose.yaml
+    dest: "{{ webservers_home }}/docker-compose.yaml"
     mode: "0640"
 
 - name: copy index.html files
   copy:
     src: "{{ item }}"
-    dest: /opt/webservers/html{{ ansible_loop.index }}/index.html
+    dest: "{{ webservers_home }}/html{{ ansible_loop.index }}/index.html"
     mode: "0644"
   loop:
     - index1.html
@@ -46,5 +45,6 @@
 
 # not using docker_compose module as it has too many dependencies
 # that I'd rather avoid maintaining
+# also, this *works*, but isn't the best way to run the containers
 - name: run compose file
-  shell: cd /opt/webservers/ && docker-compose -p webservers up -d
+  shell: cd {{ webservers_home }} && docker-compose -p webservers up -d
