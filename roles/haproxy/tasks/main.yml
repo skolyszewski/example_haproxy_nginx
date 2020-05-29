@@ -1,12 +1,34 @@
 - name: install apt_repository dependencies
   apt:
-    name: python3-apt
+    name: "{{ item }}"
+  loop:
+    - "{{ haproxy_ppa.dependencies }}"
+  tags:
+    - haproxy
+    - haproxy-install
 
 - name: add ppa
   apt_repository:
-    repo: ppa:vbernat/haproxy-2.0
+    repo: "{{ haproxy_ppa.address }}"
+  tags:
+    - haproxy
+    - haproxy-install
 
 - name: install haproxy
   apt:
-    name: haproxy=2.0.*
+    name: haproxy={{ haproxy_version }}
     update_cache: yes
+  tags:
+    - haproxy
+    - haproxy-install
+
+- name: template haproxy config
+  template:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+  notify:
+    - restart haproxy
+  tags:
+    - haproxy
+    - haproxy-install
+    - haproxy-configure
